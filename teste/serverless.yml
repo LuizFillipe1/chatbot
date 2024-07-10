@@ -1,0 +1,67 @@
+service: api-tts
+frameworkVersion: "4.1.11"
+
+plugins:
+  - serverless-dotenv-plugin
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: us-east-1
+
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+          Resource: arn:aws:dynamodb:us-east-1:${env:id_account}:table/${env:table_dynamo}
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+          Resource: arn:aws:s3:::*
+        - Effect: Allow
+          Action:
+            - polly:SynthesizeSpeech
+          Resource: "*"
+
+functions:
+  health:
+    handler: handler.health
+    events:
+      - httpApi:
+          path: /
+          method: get
+
+  v1Description:
+    handler: handler.v1_description
+    events:
+      - httpApi:
+          path: /v1
+          method: get
+
+  tts:
+    handler: handler.process_tts
+    events:
+      - httpApi:
+          path: /v1/tts
+          method: post
+
+resources:
+  Resources:
+    TTSTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${env:table_dynamo}
+        AttributeDefinitions:
+          - AttributeName: unique_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: unique_id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
