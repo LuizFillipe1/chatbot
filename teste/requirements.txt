@@ -1,0 +1,5 @@
+#npm install -g serverless
+#npm i -D serverless-dotenv-plugin
+
+boto3
+python-dotenv

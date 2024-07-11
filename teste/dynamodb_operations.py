@@ -1,14 +1,16 @@
 import datetime
-import os
 
 import boto3
-from dotenv import load_dotenv
 
-load_dotenv()
+# import os
+
+# from dotenv import load_dotenv
+
+# load_dotenv()
 # Inicializa a sessão boto3 e cria recursos para DynamoDB
 session = boto3.Session()
 dynamodb = session.resource('dynamodb')
-table = dynamodb.Table(os.getenv("table_dynamo"))
+table = dynamodb.Table('ttsTable_compass') #colocar nome da table do .env
 
 # Função para salvar dados no DynamoDB
 def save_to_dynamodb(phrase, unique_id, audio_url):
