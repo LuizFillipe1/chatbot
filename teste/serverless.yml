@@ -1,11 +1,6 @@
 service: api-tts
 frameworkVersion: "4.1.11"
 
-plugins:
-  - serverless-dotenv-plugin
-
-useDotenv: true
-
 provider:
   name: aws
   runtime: python3.9
@@ -18,11 +13,11 @@ provider:
           Action:
             - dynamodb:GetItem
             - dynamodb:PutItem
-          Resource: arn:aws:dynamodb:us-east-1:${env:id_account}:table/${env:table_dynamo}
+          Resource: arn:aws:dynamodb:us-east-1:"Id da conta":table/"Nome da tabela DynamoDB"
         - Effect: Allow
           Action:
             - s3:PutObject
-          Resource: arn:aws:s3:::*
+          Resource: arn:aws:s3:::nomedobucket/*
         - Effect: Allow
           Action:
             - polly:SynthesizeSpeech
@@ -55,7 +50,7 @@ resources:
     TTSTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${env:table_dynamo}
+        TableName: ttsTable
         AttributeDefinitions:
           - AttributeName: unique_id
             AttributeType: S
