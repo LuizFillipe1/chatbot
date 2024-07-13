@@ -43,8 +43,8 @@ functions:
           path: /v1
           method: get
 
-  tts:
-    handler: handler.process_tts
+  text_to_speech:
+    handler: handler.text_to_speech
     events:
       - httpApi:
           path: /v1/tts

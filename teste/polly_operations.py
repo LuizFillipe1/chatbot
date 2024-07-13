@@ -6,7 +6,7 @@ session = boto3.Session()
 polly = session.client('polly')
 s3 = session.client('s3')
 region = session.region_name
-bucket_name = 'bucket-audios-compass'
+bucket_name = 'nomeSuaBucket'
 
 
 create_bucket(bucket_name, region)

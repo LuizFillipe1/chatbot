@@ -1,14 +1,11 @@
 import datetime
 import json
-import logging
 
 from dynamodb_operations import get_from_dynamodb, save_to_dynamodb
 from polly_operations import generate_audio_and_store_in_s3
+
 from utils import generate_unique_id
 
-# Configure o logger para registrar informações e erros
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
 
 # Função de verificação de saúde da API
 def health(event, context):
@@ -30,19 +27,14 @@ def v1_description(event, context):
     return response
 
 # Função para processar a conversão de texto para fala
-def process_tts(event, context):
+def text_to_speech(event, context):
     try:
-        # Loga o evento recebido
-        logger.info("Received event: %s", event)
 
         if 'body' in event:
             # Faz o parse do corpo da requisição JSON
             body = json.loads(event['body'])
         else:
             body = {}
-
-        # Loga o corpo da requisição após o parse
-        logger.info("Parsed body: %s", body)
 
         # Obtém a frase da requisição
         phrase = body.get('phrase')
@@ -58,11 +50,9 @@ def process_tts(event, context):
 
         # Gera um ID único para a frase
         unique_id = generate_unique_id(phrase)
-        logger.info("Generated unique_id: %s", unique_id)
-
+        
         # Verifica se a frase já foi processada anteriormente
         existing_item = get_from_dynamodb(unique_id)
-        logger.info("Existing item: %s", existing_item)
 
         if existing_item:
             # Se a frase já existe, retorna os dados existentes
@@ -78,7 +68,6 @@ def process_tts(event, context):
         else:
             # Gera o áudio e armazena no S3
             audio_url = generate_audio_and_store_in_s3(phrase, unique_id)
-            logger.info("Generated audio URL: %s", audio_url)
 
             # Salva os dados no DynamoDB
             save_to_dynamodb(phrase, unique_id, audio_url)
@@ -94,8 +83,6 @@ def process_tts(event, context):
                 }, indent=4)
             }
     except Exception as e:
-        # Loga o erro e retorna uma resposta de erro interno
-        logger.error("Error processing TTS: %s", e)
         return {
             "statusCode": 500,
             "body": json.dumps({
