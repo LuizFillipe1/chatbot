@@ -2,12 +2,6 @@ import datetime
 
 import boto3
 
-# import os
-
-# from dotenv import load_dotenv
-
-# load_dotenv()
-# Inicializa a sessão boto3 e cria recursos para DynamoDB
 session = boto3.Session()
 dynamodb = session.resource('dynamodb')
 table = dynamodb.Table('ttsTable_compass') #colocar nome da table do .env
